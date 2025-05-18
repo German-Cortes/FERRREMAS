@@ -30,23 +30,28 @@
     <a class="navbar-brand" href="/">FERREMAS</a>
 
     <div class="d-flex align-items-center">
+      
+      {# Mostrar carrito a todos los usuarios excepto quienes están en el grupo crud_productos #}
+      {% if not user.is_authenticated or 'crud_productos' not in grupos_usuario %}
+
+        <a href="{% url 'ver_carrito' %}" class="btn btn-outline-light position-relative me-2">
+          🛒 Carrito
+          {% with request.session.carrito|length as cantidad %}
+            {% if cantidad > 0 %}
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ cantidad }}
+              </span>
+            {% endif %}
+          {% endwith %}
+        </a>
+      {% endif %}
+
       {% if user.is_authenticated %}
         <span class="text-light me-3">Hola, {{ user.username }}</span>
 
         {% if 'crud_productos' in grupos_usuario %}
           <a href="{% url 'admin_productos' %}" class="btn btn-outline-light btn-sm me-2">🛠 Productos</a>
           <a href="{% url 'crear_producto' %}" class="btn btn-outline-success btn-sm me-2">+ Crear</a>
-        {% else %}
-          <a href="{% url 'ver_carrito' %}" class="btn btn-outline-light position-relative me-2">
-            🛒 Carrito
-            {% with request.session.carrito|length as cantidad %}
-              {% if cantidad > 0 %}
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                  {{ cantidad }}
-                </span>
-              {% endif %}
-            {% endwith %}
-          </a>
         {% endif %}
 
         <form method="post" action="{% url 'logout' %}" style="display:inline;">
@@ -61,17 +66,16 @@
   </div>
 </nav>
 
+<!-- CONTENIDO PRINCIPAL -->
+<main class="container mt-4">
+  {% block content %}
+  {% endblock %}
+</main>
 
-  <!-- CONTENIDO PRINCIPAL -->
-  <main class="container mt-4">
-    {% block content %}
-    {% endblock %}
-  </main>
-
-  <!-- FOOTER FIJO -->
-  <footer class="fixed-footer">
-    <small>&copy; {{ now|default:"2025" }} FERREMAS. Todos los derechos reservados.</small>
-  </footer>
+<!-- FOOTER FIJO -->
+<footer class="fixed-footer">
+  <small>&copy; {{ now|default:"2025" }} FERREMAS. Todos los derechos reservados.</small>
+</footer>
 
 </body>
 </html>

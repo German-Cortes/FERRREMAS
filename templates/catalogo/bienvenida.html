@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Bienvenido{% endblock %}
+
+{% block content %}
+<div class="text-center mt-5">
+  <h1 class="mb-4">👋 ¡Hola, {{ user.first_name|default:user.username }}!</h1>
+  <p class="lead">Bienvenido a <strong>FERREMAS</strong>. Puedes comenzar navegando el sitio según tu rol.</p>
+
+  {% if 'crud_productos' in grupos_usuario %}
+    <a href="{% url 'admin_productos' %}" class="btn btn-primary mt-3">Ir a gestión de productos</a>
+  {% else %}
+    <a href="/" class="btn btn-success mt-3">Ir al catálogo</a>
+  {% endif %}
+</div>
+{% endblock %}

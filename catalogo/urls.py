@@ -15,5 +15,8 @@ urlpatterns = [
     path('pago-pendiente/', views.pago_pendiente, name='pago_pendiente'),
     path('registro/', views.registro_usuario, name='registro_usuario'),
     path('admin-productos/', views.admin_productos, name='admin_productos'),
+    path('carrito/actualizar/<int:producto_id>/', views.actualizar_carrito, name='actualizar_carrito'),
+    path('bienvenida/', views.bienvenida, name='bienvenida'),
+
 
 ]

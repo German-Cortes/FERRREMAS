@@ -10,7 +10,25 @@ import mercadopago
 from django.conf import settings
 from .forms import RegistroUsuarioForm
 from .decorators import solo_crud_user
-from django.http import HttpResponseForbidden
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def bienvenida(request):
+    return render(request, 'catalogo/bienvenida.html')
+
+@require_POST
+def actualizar_carrito(request, producto_id):
+    cantidad = int(request.POST.get('cantidad', 1))
+    carrito = request.session.get('carrito', {})
+
+    if cantidad > 0:
+        carrito[str(producto_id)] = cantidad
+    else:
+        carrito.pop(str(producto_id), None)  # Eliminar si se manda 0
+
+    request.session['carrito'] = carrito
+    return redirect('ver_carrito')
 
 @solo_crud_user
 def crear_producto(request):
