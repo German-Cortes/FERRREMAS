@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -109,12 +110,6 @@ def checkout(request):
     })
 
 
-# procesar_pago puede ser pública también
-def procesar_pago(request):
-    if request.method == 'POST':
-        return render(request, 'catalogo/pago_exitoso.html')
-
-
 
 def procesar_pago(request):
     carrito = request.session.get('carrito', {})
@@ -147,12 +142,13 @@ def procesar_pago(request):
         "auto_return": "approved"
     }
 
-    sdk = mercadopago.SDK(settings.MERCADOPAGO_ACCESS_TOKEN)
     preference = sdk.preference().create(preference_data)
+
+    # Validación por si falla
+    if preference["status"] != 201:
+        return HttpResponse(f"Error al crear preferencia: {preference}", status=500)
+
     return redirect(preference["response"]["init_point"])
-
-
-    return redirect(init_point)
 
 def pago_exitoso(request):
     request.session['carrito'] = {}  # vaciar carrito
