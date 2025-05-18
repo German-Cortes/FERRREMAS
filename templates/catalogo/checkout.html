@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
-
-{% block title %}Carrito de Compras{% endblock %}
+{% block title %}Checkout{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">🛒 Carrito de Compras</h1>
+<h1 class="mb-4">💳 Resumen del Pedido</h1>
 
 {% if carrito_items %}
-<table class="table table-bordered">
+<table class="table table-hover">
   <thead class="table-light">
     <tr>
       <th>Producto</th>
@@ -27,14 +26,20 @@
   </tbody>
 </table>
 
-<div class="text-end">
-  <h4>Total: <span class="text-success">${{ total }}</span></h4>
-  <a href="{% url 'checkout' %}" class="btn btn-success mt-3">Proceder al Checkout</a>
+<div class="text-end mb-4">
+  <h4>Total a Pagar: <span class="text-success">${{ total }}</span></h4>
 </div>
+
+<h4 class="mb-3">Tus datos de contacto</h4>
+<form method="post" class="border p-4 rounded bg-light">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary btn-lg mt-3 w-100">Ir a pagar</button>
+</form>
 
 {% else %}
 <div class="alert alert-info">
-  Tu carrito está vacío.
+  No tienes productos en el carrito.
 </div>
 {% endif %}
 {% endblock %}

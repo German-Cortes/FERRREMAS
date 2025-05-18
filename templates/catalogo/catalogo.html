@@ -1,22 +1,29 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Catálogo de Productos</title>
-</head>
-<body>
-    <h1>Catálogo de Productos</h1>
-    <ul>
-        {% for producto in productos %}
-            <li>
-                <h3>{{ producto.nombre }}</h3>
-                <p>{{ producto.descripcion }}</p>
-                <p><strong>Precio:</strong> ${{ producto.precio }}</p>
-                <form action="{% url 'agregar_al_carrito' producto.id %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit">Agregar al carrito</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Catálogo{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Catálogo de Productos</h1>
+<div class="row">
+  {% for producto in productos %}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        {% if producto.imagen %}
+          <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}">
+        {% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ producto.nombre }}</h5>
+          <p class="card-text">{{ producto.descripcion }}</p>
+          <p class="card-text"><strong>Precio:</strong> ${{ producto.precio }}</p>
+          <form action="{% url 'agregar_al_carrito' producto.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary w-100">Agregar al carrito</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p>No hay productos disponibles.</p>
+  {% endfor %}
+</div>
+{% endblock %}
