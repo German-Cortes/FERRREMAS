@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Catálogo de Productos</title>
+</head>
+<body>
+    <h1>Catálogo de Productos</h1>
+    <ul>
+        {% for producto in productos %}
+            <li>
+                <h3>{{ producto.nombre }}</h3>
+                <p>{{ producto.descripcion }}</p>
+                <p><strong>Precio:</strong> ${{ producto.precio }}</p>
+                <form action="{% url 'agregar_al_carrito' producto.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Agregar al carrito</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
