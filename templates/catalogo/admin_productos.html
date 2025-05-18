@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Gestión de Productos{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">📦 Gestión de Productos</h2>
+<a href="{% url 'crear_producto' %}" class="btn btn-success mb-3">+ Nuevo Producto</a>
+<table class="table table-striped">
+  <thead class="table-light">
+    <tr>
+      <th>ID</th>
+      <th>Imagen</th>
+      <th>Nombre</th>
+      <th>Precio</th>
+      <th>Stock</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for producto in productos %}
+    <tr>
+      <td>{{ producto.id }}</td>
+      <td>
+        {% if producto.imagen %}
+          <img src="{{ producto.imagen.url }}" width="60" height="60" style="object-fit: cover; border-radius: 8px;">
+        {% else %}
+          <span class="text-muted">Sin imagen</span>
+        {% endif %}
+      </td>
+      <td>{{ producto.nombre }}</td>
+      <td>${{ producto.precio }}</td>
+      <td>{{ producto.stock }}</td>
+      <td>
+        <a href="{% url 'editar_producto' producto.id %}" class="btn btn-sm btn-primary">Editar</a>
+        <a href="{% url 'eliminar_producto' producto.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

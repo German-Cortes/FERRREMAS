@@ -1,6 +1,9 @@
 from django import forms
 from .models import Producto
 from django.contrib.auth.models import User
+from django import forms
+from .models import Producto
+
 
 class ProductoForm(forms.ModelForm):
     class Meta:
@@ -25,3 +28,16 @@ class RegistroUsuarioForm(forms.ModelForm):
         if self.cleaned_data.get('password') != self.cleaned_data.get('password2'):
             raise forms.ValidationError("Las contraseñas no coinciden")
         return self.cleaned_data.get('password2')
+    
+
+class ProductoForm(forms.ModelForm):
+    class Meta:
+        model = Producto
+        fields = ['nombre', 'descripcion', 'precio', 'stock', 'imagen']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'precio': forms.NumberInput(attrs={'class': 'form-control'}),
+            'stock': forms.NumberInput(attrs={'class': 'form-control'}),
+            'imagen': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }

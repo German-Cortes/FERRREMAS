@@ -1,6 +1,15 @@
-<h1>Eliminar producto</h1>
-<p>¿Estás seguro que deseas eliminar "{{ producto.nombre }}"?</p>
-<form method="post">
+{% extends 'base.html' %}
+{% block title %}Eliminar Producto{% endblock %}
+
+{% block content %}
+<div class="alert alert-warning text-center">
+  <h2>⚠️ ¿Estás seguro que deseas eliminar este producto?</h2>
+  <p><strong>{{ producto.nombre }}</strong> será eliminado permanentemente.</p>
+
+  <form method="post" class="mt-4">
     {% csrf_token %}
-    <button type="submit">Sí, eliminar</button>
-</form>
+    <a href="{% url 'admin_productos' %}" class="btn btn-secondary me-2">Cancelar</a>
+    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+  </form>
+</div>
+{% endblock %}

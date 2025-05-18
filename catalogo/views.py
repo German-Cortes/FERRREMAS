@@ -9,6 +9,41 @@ from django.contrib.auth import login
 import mercadopago
 from django.conf import settings
 from .forms import RegistroUsuarioForm
+from .decorators import solo_crud_user
+from django.http import HttpResponseForbidden
+
+@solo_crud_user
+def crear_producto(request):
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_productos')
+    else:
+        form = ProductoForm()
+    return render(request, 'catalogo/producto_form.html', {'form': form})
+
+@solo_crud_user
+def editar_producto(request, pk):
+    producto = get_object_or_404(Producto, pk=pk)
+    form = ProductoForm(request.POST or None, request.FILES or None, instance=producto)
+    if form.is_valid():
+        form.save()
+        return redirect('admin_productos')
+    return render(request, 'catalogo/producto_form.html', {'form': form})
+
+
+def solo_cliente(view_func):
+    def _wrapped_view(request, *args, **kwargs):
+        # Aquí podrías usar un flag o grupo para filtrar compradores
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
+@solo_crud_user
+def admin_productos(request):
+    productos = Producto.objects.all()
+    return render(request, 'catalogo/admin_productos.html', {'productos': productos})
+
 
 def vista_catalogo(request):
     productos = Producto.objects.all()
