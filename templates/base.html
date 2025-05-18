@@ -27,6 +27,18 @@
 
   <!-- HEADER FIJO -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <!-- Dentro del nav -->
+{% if user.is_authenticated %}
+  <span class="text-light me-3">Hola, {{ user.username }}</span>
+  <form method="post" action="{% url 'logout' %}" style="display:inline;">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-outline-light btn-sm">Cerrar sesión</button>
+</form>
+{% else %}
+  <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm me-2">Iniciar sesión</a>
+  <a href="{% url 'registro_usuario' %}" class="btn btn-success btn-sm">Registrarse</a>
+{% endif %}
+
     <div class="container-fluid">
       <a class="navbar-brand" href="/">FERREMAS</a>
       <div class="d-flex">

@@ -8,6 +8,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 import mercadopago
 from django.conf import settings
+from .forms import RegistroUsuarioForm
 
 def vista_catalogo(request):
     productos = Producto.objects.all()
@@ -78,6 +79,7 @@ def registro(request):
         form = UserCreationForm()
     return render(request, 'registration/registro.html', {'form': form})
 
+
 from .forms import DatosContactoForm
 
 def checkout(request):
@@ -125,7 +127,7 @@ def procesar_pago(request):
             "unit_price": float(producto.precio),
             "currency_id": "CLP"
         })
-
+    
     sdk = mercadopago.SDK(settings.MERCADOPAGO_ACCESS_TOKEN)
 
     preference_data = {
@@ -138,20 +140,36 @@ def procesar_pago(request):
             "success": request.build_absolute_uri('/pago-exitoso/'),
             "failure": request.build_absolute_uri('/pago-error/'),
             "pending": request.build_absolute_uri('/pago-pendiente/')
-        },
-        "auto_return": "approved"
+        }
     }
 
-    preference = sdk.preference().create(preference_data)
+    request.session['carrito_para_descuento'] = carrito
 
-    # Validación por si falla
-    if preference["status"] != 201:
-        return HttpResponse(f"Error al crear preferencia: {preference}", status=500)
+    preference = sdk.preference().create(preference_data)
+    print("📦 PREFERENCE RESPONSE >>>", preference)
+
+    if preference.get("status") != 201 or "init_point" not in preference.get("response", {}):
+        return HttpResponse(
+            f"<h2>Error al crear preferencia</h2><pre>{preference}</pre>",
+            status=500
+        )
 
     return redirect(preference["response"]["init_point"])
 
 def pago_exitoso(request):
-    request.session['carrito'] = {}  # vaciar carrito
+    carrito = request.session.get('carrito_para_descuento', {})
+
+    for producto_id, cantidad in carrito.items():
+        try:
+            producto = Producto.objects.get(id=producto_id)
+            producto.stock = max(producto.stock - cantidad, 0)
+            producto.save()
+        except Producto.DoesNotExist:
+            continue
+
+    request.session['carrito'] = {}  # Vaciar carrito visual
+    request.session['carrito_para_descuento'] = {}  # Vaciar temporal
+
     return render(request, 'catalogo/pago_exitoso.html')
 
 def pago_error(request):
@@ -160,3 +178,16 @@ def pago_error(request):
 def pago_pendiente(request):
     return render(request, 'catalogo/pago_pendiente.html')
 
+
+def registro_usuario(request):
+    if request.method == 'POST':
+        form = RegistroUsuarioForm(request.POST)
+        if form.is_valid():
+            usuario = form.save(commit=False)
+            usuario.set_password(form.cleaned_data['password'])
+            usuario.save()
+            login(request, usuario)
+            return redirect('vista_catalogo')
+    else:
+        form = RegistroUsuarioForm()
+    return render(request, 'registration/registro_usuario.html', {'form': form})
