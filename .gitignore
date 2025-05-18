@@ -1,0 +1,57 @@
+Byte-compiled / optimized / DLL files,
+pycache/
+*.py[cod]
+*$py.class
+
+Virtual environment,
+env/
+venv/
+ENV/
+.venv/
+
+Django stuff:,
+*.log
+*.pot
+*.pyc
+*.pyo
+.sqlite3
+db.sqlite3
+media/
+staticfiles/
+
+Local settings,
+.env
+.env.
+
+Django migrations,
+/migrations/
+/migrations/.py
+**/migrations/.pyc
+
+VSCode settings,
+.vscode/
+
+macOS,
+.DS_Store
+
+PyCharm,
+.idea/
+
+Coverage reports,
+htmlcov/
+.coverage
+.tox/
+
+Testing,
+pytest_cache/
+.coverage.*
+
+Compiled translations,
+*.mo
+
+Node (si usas npm/yarn en frontend),
+node_modules/
+npm-debug.log
+yarn-error.log
+dist/
+build/
